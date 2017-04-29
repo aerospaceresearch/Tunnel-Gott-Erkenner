@@ -10,7 +10,8 @@ adc = Adafruit_ADS1x15.ADS1115()
 bus = smbus.SMBus(1)
 
 # MMA7455L address, 0x1D
-bus.write_byte_data(0x1D, 0x16, 0x01)
+acc_i2c_id = 0x1D
+bus.write_byte_data(acc_i2c_id, 0x16, 0x01)
 
 time.sleep(0.5)
 
@@ -27,7 +28,10 @@ while True:
         values[i] = adc.read_adc(i, gain=1)
 
     # Read 6 bytes data back from 0x00
-    data=bus.read_i2c_block_data(0x1D, 0x00, 6)
+    try:
+        data=bus.read_i2c_block_data(acc_i2c_id, 0x00, 6)
+    except:
+        data = [0] * 6
 
     # Convert the data to 10-bits
     xAcc = (data[1] & 0x03) * 256 + data [0]
