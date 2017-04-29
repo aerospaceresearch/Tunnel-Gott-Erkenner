@@ -18,6 +18,7 @@ time.sleep(0.5)
 #print('-' * 55)
 
 start = datetime.datetime.now()
+ndata = None
 values = [0]*7
 while True:
     # Read all the ADC channel values in a list.
@@ -43,11 +44,15 @@ while True:
 
 #    print('| {0:>6} | {1:>6} | {2:>6} | {3:>6} | {4:>6} | {5:>6} |'.format(*values))
     # maybe not fast enough
-    data = numpy.vstack([data, values])
+    if ndata is None:
+        ndata = numpy.array(values)
+    else:
+        ndata = numpy.vstack([ndata, values])
     if (datetime.datetime.now() - start).seconds > 120:
         data = []
         header = ['x', 'y', 'z', 'ppd', 'x2', 'y2', 'z2']
         gps = []
         fn = int(time.mktime(start.timetuple()))
-        numpy.save('/tmp/{fn}.npy'.format(fn=fn), {'data': data, 'header': header, 'gps': gps})
-
+        numpy.save('/tmp/{fn}.npy'.format(fn=fn), {'data': ndata, 'header': header, 'gps': gps})
+        ndata = None
+        start = datetime.datetime.now()
