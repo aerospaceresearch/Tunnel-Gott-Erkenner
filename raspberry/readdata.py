@@ -3,6 +3,7 @@ import time
 import smbus
 import Adafruit_ADS1x15
 import numpy
+import serial
 
 
 adc = Adafruit_ADS1x15.ADS1115()
@@ -50,8 +51,15 @@ while True:
         ndata = numpy.vstack([ndata, values])
     if (datetime.datetime.now() - start).seconds > 120:
         data = []
-        header = ['x', 'y', 'z', 'ppd', 'x2', 'y2', 'z2']
-        gps = []
+        header = ['x', 'y', 'z', 'pps', 'x2', 'y2', 'z2']
+        s = serial.Serial("/dev/ttyAMA0", 9600, timeout=0.5)
+        line = ""
+        while True:
+            line = s.readline()
+            if line.startswith('$GPGGA'):
+                break
+
+        gps = line
         fn = int(time.mktime(start.timetuple()))
         numpy.save('/tmp/{fn}.npy'.format(fn=fn), {'data': ndata, 'header': header, 'gps': gps})
         ndata = None
