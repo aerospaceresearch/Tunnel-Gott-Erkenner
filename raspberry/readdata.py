@@ -1,6 +1,8 @@
+import datetime
 import time
 import smbus
 import Adafruit_ADS1x15
+import numpy
 
 
 adc = Adafruit_ADS1x15.ADS1115()
@@ -11,15 +13,14 @@ bus.write_byte_data(0x1D, 0x16, 0x01)
 
 time.sleep(0.5)
 
-
 # Print nice channel column headers.
-print('|  x1    |  y1    |  z1    |  x2    |  y2    |  z2    |')
-print('-' * 55)
+#print('|  x1    |  y1    |  z1    |  x2    |  y2    |  z2    |')
+#print('-' * 55)
 
-# Main loop.
+start = datetime.datetime.now()
+values = [0]*7
 while True:
     # Read all the ADC channel values in a list.
-    values = [0]*7
     for i in range(4):
         values[i] = adc.read_adc(i, gain=1)
 
@@ -40,5 +41,13 @@ while True:
         zAcc -= 1024
     values[6] = zAcc
 
-    # Print the ADC values.
-    print('| {0:>6} | {1:>6} | {2:>6} | {3:>6} | {4:>6} | {5:>6} |'.format(*values))
+#    print('| {0:>6} | {1:>6} | {2:>6} | {3:>6} | {4:>6} | {5:>6} |'.format(*values))
+    # maybe not fast enough
+    data = numpy.vstack([data, values])
+    if (datetime.datetime.now() - start).seconds > 120:
+        data = []
+        header = ['x', 'y', 'z', 'ppd', 'x2', 'y2', 'z2']
+        gps = []
+        fn = int(time.mktime(start.timetuple()))
+        numpy.save('/tmp/{fn}.npy'.format(fn=fn), {'data': data, 'header': header, 'gps': gps})
+
