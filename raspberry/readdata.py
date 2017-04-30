@@ -54,9 +54,6 @@ while True:
             zAcc -= 1024
         values[6] = zAcc
     if config.MPU6050:
-        # MPU6050: Read 6 bytes data back from 0x3b
-        data=bus.read_i2c_block_data(0x68, 0x3b, 6)
-
         # Join the data to 16-bits 2-complement
         xAcc = data[0] * 256 + data [1]
         xAxx = xAcc - ((xAcc & 0x8000) << 1)
