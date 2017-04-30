@@ -10,8 +10,8 @@ import config
 adc = Adafruit_ADS1x15.ADS1115()
 bus = smbus.SMBus(1)
 
-# MMA7455L address, 0x1D
 if config.MMA7455L:
+    # MMA7455L address, 0x1D
     bus.write_byte_data(0x1D, 0x16, 0x01)
 if config.MPU6050:
     # Configure MPU-6050: Leave sleep mode and choose better clock
@@ -29,9 +29,13 @@ while True:
     for i in range(4):
         values[i] = adc.read_adc(i, gain=1)
 
-    # Read 6 bytes data back from 0x00
     try:
-        data=bus.read_i2c_block_data(acc_i2c_id, 0x00, 6)
+        if config.MMA7455L:
+            # Read 6 bytes data back from 0x00
+            data=bus.read_i2c_block_data(0x1D, 0x00, 6)
+        if config.MPU6050:
+            # MPU6050: Read 6 bytes data back from 0x3b
+            data=bus.read_i2c_block_data(0x68, 0x3b, 6)
     except:
         data = [0] * 6
 
