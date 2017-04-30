@@ -65,7 +65,8 @@ while True:
         zAxx = zAcc - ((zAcc & 0x8000) << 1)
         values[6] = zAcc
 
-
+    if config.DEBUG:
+        print('| {0:>6} | {1:>6} | {2:>6} | {3:>6} | {4:>6} | {5:>6} | {6:>6} |'.format(*values))
     if ndata is None:
         ndata = numpy.array(values)
     else:
