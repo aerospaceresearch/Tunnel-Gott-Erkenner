@@ -1,0 +1,16 @@
+(1) in /boot/config.txt
+
+am Ende das hier einfügen:
+dtoverlay=pi3-miniuart-bt
+
+(2) in /boot/cmdline.txt
+console=serial0,115200
+entfernen
+
+(3) abfragen der werte z.b. wie folgt:
+        s = serial.Serial("/dev/ttyAMA0", 9600, timeout=0.5)
+        line = ""
+        while True:
+            line = s.readline()
+            if line.startswith('$GPGGA'):
+                break
