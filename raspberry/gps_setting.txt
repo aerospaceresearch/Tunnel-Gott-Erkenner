@@ -1,14 +1,39 @@
-(1) in /boot/config.txt
+Translations (EN, DE)
 
-am Ende das hier einfügen:
-dtoverlay=pi3-miniuart-bt
+
+
+# English
+This describes the settings to make the GPS NMEA data from the GPS-chip work with the Raspberry Pi 3. 
+
+The Raspberry Pi 3 needs to have some settings changed to work with the GPS receiver attached on RX and TX pins.
+In short, the bluetooth settings needs to be changed.
+
+In (1), insert (1a) at the end of the file!
+In (2), delete (2a).
+Create a .py file and add (3) for calling the values via the RX pin, e.g. like this:
+
+
+
+# Deutsch
+Dieses beschreibt die zu machenden Einstellungen, damit die GPS NMEA Daten vom GPS Chip mit dem Raspberry Pi 3 überhaupt angenommen werden können.
+
+Der Raspberry Pi 3 braucht ein paar Änderungen an den Einstellungen, damit der GPS receiver an den RX und TX pins funktionieren kann.
+In Kürze, die Bluetooth Einstellungen müssen geändert werden.
+
+In (1), am Dateiende (1a) einfügen!
+In (2), entferne (2a).
+Erzeuge eine .py Datei und füge (3) zum Abfragen der Werte über den RX Pin ein, z.b. wie folgt:
+
+
+
+CODE:
+(1) in /boot/config.txt
+(1a) dtoverlay=pi3-miniuart-bt
 
 (2) in /boot/cmdline.txt
-console=serial0,115200
-entfernen
+(2a) console=serial0,115200
 
-(3) abfragen der werte z.b. wie folgt:
-        s = serial.Serial("/dev/ttyAMA0", 9600, timeout=0.5)
+(3) s = serial.Serial("/dev/ttyAMA0", 9600, timeout=0.5)
         line = ""
         while True:
             line = s.readline()
